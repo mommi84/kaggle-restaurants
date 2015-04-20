@@ -14,7 +14,7 @@ import com.thesmartpuzzle.kaggle.restaurants.model.City;
  * @author Tommaso Soru <t.soru@informatik.uni-leipzig.de>
  *
  */
-public class Main {
+public class GeoMain {
 
 	public static void main(String[] args) throws IOException {
 		
