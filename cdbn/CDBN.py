@@ -20,7 +20,7 @@ from CRBM import CRBM
 from DBN import DBN
 from utils import *
 
-
+from numpy import genfromtxt
 
  
 class CDBN(DBN):
@@ -95,25 +95,30 @@ class CDBN(DBN):
 def test_cdbn(pretrain_lr=0.1, pretraining_epochs=1000, k=1, \
              finetune_lr=0.1, finetune_epochs=200):
 
-    x = numpy.array([[0.4, 0.5, 0.5, 0.,  0.,  0.],
-                     [0.5, 0.3,  0.5, 0.,  0.,  0.],
-                     [0.4, 0.5, 0.5, 0.,  0.,  0.],
-                     [0.,  0.,  0.5, 0.3, 0.5, 0.],
-                     [0.,  0.,  0.5, 0.4, 0.5, 0.],
-                     [0.,  0.,  0.5, 0.5, 0.5, 0.]])
-    
-    y = numpy.array([[1, 0],
-                     [1, 0],
-                     [1, 0],
-                     [0, 1],
-                     [0, 1],
-                     [0, 1]])
+#    x = numpy.array([[0.4, 0.5, 0.5, 0.,  0.,  0.],
+#                     [0.5, 0.3,  0.5, 0.,  0.,  0.],
+#                     [0.4, 0.5, 0.5, 0.,  0.,  0.],
+#                     [0.,  0.,  0.5, 0.3, 0.5, 0.],
+#                     [0.,  0.,  0.5, 0.4, 0.5, 0.],
+#                     [0.,  0.,  0.5, 0.5, 0.5, 0.]])
+#    
+#    y = numpy.array([[1, 0],
+#                     [1, 0],
+#                     [1, 0],
+#                     [0, 1],
+#                     [0, 1],
+#                     [0, 1]])
 
-    
+    my_data = genfromtxt('../data/train-numericdate-norm.csv', delimiter=',')
+    x = my_data[:,0:38]
+    y = my_data[:,38:39]
+    #print x
+    #print y
+
     rng = numpy.random.RandomState(123)
 
     # construct DBN
-    dbn = CDBN(input=x, label=y, n_ins=6, hidden_layer_sizes=[5, 5], n_outs=2, numpy_rng=rng)
+    dbn = CDBN(input=x, label=y, n_ins=38, hidden_layer_sizes=[20, 20, 20], n_outs=1, numpy_rng=rng)
 
     # pre-training (TrainUnsupervisedDBN)
     dbn.pretrain(lr=pretrain_lr, k=1, epochs=pretraining_epochs)
@@ -123,11 +128,11 @@ def test_cdbn(pretrain_lr=0.1, pretraining_epochs=1000, k=1, \
 
 
     # test
-    x = numpy.array([[0.5, 0.5, 0., 0., 0., 0.],
-                     [0., 0., 0., 0.5, 0.5, 0.],
-                     [0.5, 0.5, 0.5, 0.5, 0.5, 0.]])
-
+    #x = numpy.array([[0.5, 0.5, 0., 0., 0., 0.],
+    #                 [0., 0., 0., 0.5, 0.5, 0.],
+    #                 [0.5, 0.5, 0.5, 0.5, 0.5, 0.]])
     
+    # TODO predicting train dataset (for now)
     print dbn.predict(x)
 
 

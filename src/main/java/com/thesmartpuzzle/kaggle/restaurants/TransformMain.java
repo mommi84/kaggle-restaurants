@@ -3,12 +3,10 @@ package com.thesmartpuzzle.kaggle.restaurants;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import com.thesmartpuzzle.kaggle.restaurants.crawlers.GeoNames;
-import com.thesmartpuzzle.kaggle.restaurants.model.City;
 
 /**
  * @author Tommaso Soru <t.soru@informatik.uni-leipzig.de>
@@ -18,46 +16,54 @@ public class TransformMain {
 
 	public static void main(String[] args) throws IOException {
 		
-		final String INPUT_PATH = "data/test-numericdate.csv";
-		final String OUTPUT_PATH = "data/test-numericdate-geonames.csv";
-		
-		final int column = 3;
-		
-		
-		GeoNames geo = new GeoNames();
-		geo.run(INPUT_PATH, column);
-		
-		HashMap<String, City> index = geo.getIndex();
-		
+		final String INPUT_PATH = "data/train-numericdate.csv";
+		final String OUTPUT_PATH = "data/train-numericdate-norm.csv";
+				
 		CSVReader reader = new CSVReader(new FileReader(INPUT_PATH), ',', '"', CSVWriter.NO_ESCAPE_CHARACTER);
-		CSVWriter writer = new CSVWriter(new FileWriter(OUTPUT_PATH), ',', '"');
+		CSVWriter writer = new CSVWriter(new FileWriter(OUTPUT_PATH), ',', CSVWriter.NO_QUOTE_CHARACTER);
 		
 		String[] nextLine = reader.readNext(); // column titles
+		int l = nextLine.length - 5;
 		
-		String[] geoLine = new String[nextLine.length + 3];
-		for(int i=0; i<=column; i++)
-			geoLine[i] = nextLine[i];
-		geoLine[column+1] = "geonames_lat";
-		geoLine[column+2] = "geonames_lng";
-		geoLine[column+3] = "geonames_pop";
-		for(int i=column+4; i<geoLine.length; i++)
-			geoLine[i] = nextLine[i-3];
-		writer.writeNext(geoLine);
+		double[] mins = new double[l];
+		double[] maxs = new double[l];
+		for(int i=0; i<maxs.length; i++) {
+			mins[i] = Double.MAX_VALUE;
+			maxs[i] = Double.MIN_VALUE;
+		}
 		
+		ArrayList<String[]> lines = new ArrayList<String[]>();
 		while ((nextLine = reader.readNext()) != null) {
+			String[] trLine = new String[l];
+			// numeric date
+			trLine[0] = nextLine[2];
+			// numeric values
+			for(int i=6; i<nextLine.length; i++)
+				trLine[i-5] = nextLine[i];
 			
-			City c = index.get(nextLine[column]);
-						
-			geoLine = new String[nextLine.length + 3];
-			for(int i=0; i<=column; i++)
-				geoLine[i] = nextLine[i];
-			geoLine[column+1] = (c == null) ? "" : c.getLat();
-			geoLine[column+2] = (c == null) ? "" : c.getLng();
-			geoLine[column+3] = (c == null) ? "" : c.getPop() + "";
-			for(int i=column+4; i<geoLine.length; i++)
-				geoLine[i] = nextLine[i-3];
+			for(int i=0; i<trLine.length; i++) {
+				double val = Double.parseDouble(trLine[i]);
+				if(val < mins[i])
+					mins[i] = val;
+				if(val > maxs[i])
+					maxs[i] = val;
+			}
 			
-			writer.writeNext(geoLine);
+			lines.add(trLine);
+			
+		}
+		
+		
+		for(int i=0; i<maxs.length; i++) {
+			System.out.println(mins[i]+"\t"+maxs[i]);
+		}
+		
+		for(String[] line : lines) {
+			for(int i=0; i<line.length; i++) {
+				double val = (Double.parseDouble(line[i]) - mins[i]) / (maxs[i] - mins[i]);
+				line[i] = "" + val;
+			}
+			writer.writeNext(line);
 		}
 		
 		writer.close();
