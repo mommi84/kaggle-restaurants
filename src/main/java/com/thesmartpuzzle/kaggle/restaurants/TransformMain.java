@@ -28,8 +28,8 @@ public class TransformMain {
 		double[] mins = new double[l];
 		double[] maxs = new double[l];
 		for(int i=0; i<maxs.length; i++) {
-			mins[i] = Double.MAX_VALUE;
-			maxs[i] = Double.MIN_VALUE;
+			mins[i] = Double.POSITIVE_INFINITY;
+			maxs[i] = Double.NEGATIVE_INFINITY;
 		}
 		
 		ArrayList<String[]> lines = new ArrayList<String[]>();
@@ -43,11 +43,15 @@ public class TransformMain {
 			
 			for(int i=0; i<trLine.length; i++) {
 				double val = Double.parseDouble(trLine[i]);
+				System.out.println(i+": "+val);
 				if(val < mins[i])
 					mins[i] = val;
 				if(val > maxs[i])
 					maxs[i] = val;
 			}
+			System.out.print(trLine[l-1] + " >> ");
+			trLine[l-1] = toFeatures(trLine[l-1], 10);
+			System.out.println(trLine[l-1]);
 			
 			lines.add(trLine);
 			
@@ -59,7 +63,7 @@ public class TransformMain {
 		}
 		
 		for(String[] line : lines) {
-			for(int i=0; i<line.length; i++) {
+			for(int i=0; i<line.length-1; i++) {
 				double val = (Double.parseDouble(line[i]) - mins[i]) / (maxs[i] - mins[i]);
 				line[i] = "" + val;
 			}
@@ -68,6 +72,27 @@ public class TransformMain {
 		
 		writer.close();
 		reader.close();
+	}
+
+	private static String toFeatures(String string, int nBits) {
+		String str = "";
+		String bits = toBits(transform(Double.parseDouble(string)), nBits);
+		for(int i=0; i<bits.length(); i++)
+			str = str + ',' + bits.charAt(i);
+		System.out.println(str);
+		return str.substring(1);
+	}
+
+	private static int transform(double d) {
+		return (int) (100 * Math.log10(d));
+	}
+
+	private static String toBits(int x, int nBits) {
+		String str = "";
+		String bin = Integer.toBinaryString(x);
+		for(int i=0; i<nBits-bin.length(); i++)
+			str += "0";
+		return str + bin;
 	}
 
 }

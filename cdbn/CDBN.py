@@ -92,7 +92,7 @@ class CDBN(DBN):
 
 
 
-def test_cdbn(pretrain_lr=0.1, pretraining_epochs=1000, k=1, \
+def test_cdbn(pretrain_lr=0.1, pretraining_epochs=2000, k=1, \
              finetune_lr=0.1, finetune_epochs=200):
 
 #    x = numpy.array([[0.4, 0.5, 0.5, 0.,  0.,  0.],
@@ -111,14 +111,14 @@ def test_cdbn(pretrain_lr=0.1, pretraining_epochs=1000, k=1, \
 
     my_data = genfromtxt('../data/train-numericdate-norm.csv', delimiter=',')
     x = my_data[:,0:38]
-    y = my_data[:,38:39]
+    y = my_data[:,38:48]
     #print x
     #print y
 
     rng = numpy.random.RandomState(123)
 
     # construct DBN
-    dbn = CDBN(input=x, label=y, n_ins=38, hidden_layer_sizes=[20, 20, 20], n_outs=1, numpy_rng=rng)
+    dbn = CDBN(input=x, label=y, n_ins=38, hidden_layer_sizes=[10, 10, 10], n_outs=10, numpy_rng=rng)
 
     # pre-training (TrainUnsupervisedDBN)
     dbn.pretrain(lr=pretrain_lr, k=1, epochs=pretraining_epochs)
@@ -133,7 +133,9 @@ def test_cdbn(pretrain_lr=0.1, pretraining_epochs=1000, k=1, \
     #                 [0.5, 0.5, 0.5, 0.5, 0.5, 0.]])
     
     # TODO predicting train dataset (for now)
-    print dbn.predict(x)
+    out = dbn.predict(x)
+    print y
+    print out
 
 
 
