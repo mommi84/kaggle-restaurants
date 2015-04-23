@@ -11,7 +11,7 @@ import com.thesmartpuzzle.kaggle.restaurants.crawlers.GeoNames;
 import com.thesmartpuzzle.kaggle.restaurants.model.City;
 
 /**
- * @author Tommaso Soru <t.soru@informatik.uni-leipzig.de>
+ * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
 public class GeoMain {
