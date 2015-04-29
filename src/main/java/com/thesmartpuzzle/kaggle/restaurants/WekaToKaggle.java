@@ -19,6 +19,12 @@ public class WekaToKaggle {
 
 	}
 
+	/**
+	 * Convert the Weka output file (with ID = n) for submitting it to Kaggle.
+	 * 
+	 * @param n
+	 * @throws IOException
+	 */
 	private static void run(int n) throws IOException {
 
 		final String INPUT_PATH = "predictions/weka_" + n + ".csv";

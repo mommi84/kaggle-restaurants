@@ -19,10 +19,16 @@ public class WekaMain {
 
 	}
 
+	/**
+	 * Add fake "revenue" column (all zeroes) for Weka.
+	 * 
+	 * @param prefix
+	 * @throws IOException
+	 */
 	private static void run(String prefix) throws IOException {
 
-		final String INPUT_PATH = "data/" + prefix + "-numericdate.csv";
-		final String OUTPUT_PATH = "data/" + prefix + "-numericdate-weka.csv";
+		final String INPUT_PATH = "data/" + prefix + "-numericdate-dummy.csv";
+		final String OUTPUT_PATH = "data/" + prefix + "-numericdate-dummy-weka.csv";
 
 		CSVReader reader = new CSVReader(new FileReader(INPUT_PATH), ',', '"',
 				CSVWriter.NO_ESCAPE_CHARACTER);
