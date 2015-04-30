@@ -1,7 +1,6 @@
 package com.thesmartpuzzle.kaggle.restaurants;
 
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.TreeSet;
 

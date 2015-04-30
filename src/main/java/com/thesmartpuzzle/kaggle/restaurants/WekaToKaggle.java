@@ -15,7 +15,7 @@ public class WekaToKaggle {
 
 	public static void main(String[] args) throws IOException {
 
-		run(1);
+		run(2);
 
 	}
 

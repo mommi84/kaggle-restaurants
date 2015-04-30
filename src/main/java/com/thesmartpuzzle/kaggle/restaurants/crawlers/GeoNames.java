@@ -11,8 +11,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -27,7 +26,7 @@ import com.thesmartpuzzle.kaggle.restaurants.model.City;
  */
 public class GeoNames {
 	
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = Logger.getLogger(GeoNames.class);
 	
 	private static final String GEONAMES_QUERY_PREFIX = "http://api.geonames.org/searchJSON?"
 			+ "formatted=true&lang=en&username=mommi84&style=full&country=TR&maxRows=1&featureClass=P&q=";
