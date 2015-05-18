@@ -13,6 +13,7 @@
 
 import sys
 import numpy
+import math
 import csv
 from HiddenLayer import HiddenLayer
 from LogisticRegression import LogisticRegression
@@ -20,8 +21,13 @@ from RBM import RBM
 from CRBM import CRBM
 from DBN import DBN
 from utils import *
+from sklearn.metrics import mean_squared_error as mse
 
 from numpy import genfromtxt
+from __builtin__ import xrange
+from array import array
+from cmath import exp
+from scipy.special._ufuncs import exp10
 
  
 class CDBN(DBN):
@@ -93,8 +99,8 @@ class CDBN(DBN):
 
 
 
-def test_cdbn(pretrain_lr=0.01, pretraining_epochs=500, k=1, \
-             finetune_lr=0.01, finetune_epochs=500):
+def test_cdbn(pretrain_lr=0.01, pretraining_epochs=1000, k=1, \
+             finetune_lr=0.01, finetune_epochs=1000):
 #     xdata = [[0.4, 0.5, 0.5, 0.,  0.,  0.],
 #                      [0.5, 0.3,  0.5, 0.,  0.,  0.],
 #                      [0.4, 0.5, 0.5, 0.,  0.,  0.],
@@ -161,9 +167,25 @@ def test_cdbn(pretrain_lr=0.01, pretraining_epochs=500, k=1, \
     print "PREDICTION"
     for o_ in out:
         print [out_el for out_el in o_]
-
-
-
+    # normalize outputs
+    thr = out.max(axis=0) / 2
+    out_norm = numpy.zeros((len(out), len(thr)))
+    for i in xrange(0, len(out)):
+        for j in xrange(0, len(out[i])):
+            out_norm[i][j] = (out[i][j] >= thr[j])
+    print out_norm
+    # compute revenues
+    rev = [math.pow(10, numpy.sum(2**numpy.arange(len(out_))*out_[::-1]) / 100) for out_ in out_norm]
+    print rev
+    # compute RMSE
+    filez2 = open('../data/train-numericdate.csv', 'r')
+    data2 = csv.reader(filez2, delimiter=',')
+    next(data2, None)
+    alldata2 = numpy.array([row for row in data2])
+    revenue = map(int, alldata2[:,43])
+    print revenue
+    print "RMSE = " + str(math.sqrt(mse(rev, revenue)))
+    
 
 if __name__ == "__main__":
     test_cdbn()
