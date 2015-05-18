@@ -93,8 +93,8 @@ class CDBN(DBN):
 
 
 
-def test_cdbn(pretrain_lr=0.1, pretraining_epochs=50, k=1, \
-             finetune_lr=0.1, finetune_epochs=50):
+def test_cdbn(pretrain_lr=0.01, pretraining_epochs=500, k=1, \
+             finetune_lr=0.01, finetune_epochs=500):
 #     xdata = [[0.4, 0.5, 0.5, 0.,  0.,  0.],
 #                      [0.5, 0.3,  0.5, 0.,  0.,  0.],
 #                      [0.4, 0.5, 0.5, 0.,  0.,  0.],
@@ -136,7 +136,7 @@ def test_cdbn(pretrain_lr=0.1, pretraining_epochs=50, k=1, \
     rng = numpy.random.RandomState(123)
 
     # construct DBN
-    dbn = CDBN(input=x, label=y, n_ins=38, hidden_layer_sizes=[100, 10, 100], n_outs=10, numpy_rng=rng)
+    dbn = CDBN(input=x, label=y, n_ins=38, hidden_layer_sizes=[30, 30, 30], n_outs=10, numpy_rng=rng)
 
     # pre-training (TrainUnsupervisedDBN)
     dbn.pretrain(lr=pretrain_lr, k=1, epochs=pretraining_epochs)
