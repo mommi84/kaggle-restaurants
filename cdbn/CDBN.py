@@ -13,6 +13,7 @@
 
 import sys
 import numpy
+import csv
 from HiddenLayer import HiddenLayer
 from LogisticRegression import LogisticRegression
 from RBM import RBM
@@ -92,15 +93,17 @@ class CDBN(DBN):
 
 
 
-def test_cdbn(pretrain_lr=0.1, pretraining_epochs=2000, k=1, \
-             finetune_lr=0.1, finetune_epochs=200):
-
-#    x = numpy.array([[0.4, 0.5, 0.5, 0.,  0.,  0.],
-#                     [0.5, 0.3,  0.5, 0.,  0.,  0.],
-#                     [0.4, 0.5, 0.5, 0.,  0.,  0.],
-#                     [0.,  0.,  0.5, 0.3, 0.5, 0.],
-#                     [0.,  0.,  0.5, 0.4, 0.5, 0.],
-#                     [0.,  0.,  0.5, 0.5, 0.5, 0.]])
+def test_cdbn(pretrain_lr=0.1, pretraining_epochs=50, k=1, \
+             finetune_lr=0.1, finetune_epochs=50):
+#     xdata = [[0.4, 0.5, 0.5, 0.,  0.,  0.],
+#                      [0.5, 0.3,  0.5, 0.,  0.,  0.],
+#                      [0.4, 0.5, 0.5, 0.,  0.,  0.],
+#                      [0.,  0.,  0.5, 0.3, 0.5, 0.],
+#                      [0.,  0.,  0.5, 0.4, 0.5, 0.],
+#                      [0.,  0.,  0.5, 0.5, 0.5, 0.]]
+#     print xdata
+#     x = numpy.array(xdata)
+#     print x
 #    
 #    y = numpy.array([[1, 0],
 #                     [1, 0],
@@ -109,16 +112,31 @@ def test_cdbn(pretrain_lr=0.1, pretraining_epochs=2000, k=1, \
 #                     [0, 1],
 #                     [0, 1]])
 
-    my_data = genfromtxt('../data/train-numericdate-norm.csv', delimiter=',')
-    x = my_data[:,0:38]
-    y = my_data[:,38:48]
-    #print x
-    #print y
+#     my_data = numpy.loadtxt('../data/NOT_VALID/train-numericdate-norm-cdbn.csv', delimiter=',')
+#     xdata = my_data[:,0:38]
+
+    filez = open('../data/NOT_VALID/train-numericdate-norm-cdbn.csv', 'r')
+    data = csv.reader(filez, delimiter=',')
+    alldata = [map(float, row) for row in data]
+#     print alldata
+    
+#     xdata = alldata[0][:]
+#     print alldata[0:][0:38]
+#     print alldata[0:38][0]
+#     print xdata
+#     ydata = [row for row in data[:,38:48]]
+    xydata = numpy.array(alldata)
+#     x = numpy.array(xdata)
+#     y = numpy.array(ydata)
+    x = xydata[:,0:38]
+    y = xydata[:,38:48]
+#     print [x_ for x_ in x]
+#     print [y_ for y_ in y]
 
     rng = numpy.random.RandomState(123)
 
     # construct DBN
-    dbn = CDBN(input=x, label=y, n_ins=38, hidden_layer_sizes=[10, 10, 10], n_outs=10, numpy_rng=rng)
+    dbn = CDBN(input=x, label=y, n_ins=38, hidden_layer_sizes=[100, 10, 100], n_outs=10, numpy_rng=rng)
 
     # pre-training (TrainUnsupervisedDBN)
     dbn.pretrain(lr=pretrain_lr, k=1, epochs=pretraining_epochs)
@@ -134,8 +152,15 @@ def test_cdbn(pretrain_lr=0.1, pretraining_epochs=2000, k=1, \
     
     # TODO predicting train dataset (for now)
     out = dbn.predict(x)
-    print y
-    print out
+    print "INPUT"
+    for x_ in x:
+        print [in_el for in_el in x_]
+    print "TARGET"
+    for y_ in y:
+        print [y_el for y_el in y_]
+    print "PREDICTION"
+    for o_ in out:
+        print [out_el for out_el in o_]
 
 
 
